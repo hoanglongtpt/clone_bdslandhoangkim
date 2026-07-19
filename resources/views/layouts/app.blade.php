@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') · Hoàng Kim Land CRM</title>
     <link rel="stylesheet" href="{{ asset('css/crm.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 </head>
 <body>
 <header class="topbar">
@@ -36,4 +37,3 @@
 @stack('scripts')
 </body>
 </html>
-

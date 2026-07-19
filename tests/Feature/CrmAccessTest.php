@@ -21,7 +21,10 @@ class CrmAccessTest extends TestCase
     public function test_admin_can_see_dashboard_and_user_management(): void
     {
         $admin = User::factory()->create(['password' => 'password', 'role' => 'admin', 'is_active' => true]);
-        $this->actingAs($admin)->get('/')->assertOk()->assertSee('Bộ lọc');
+        $this->actingAs($admin)->get('/')->assertOk()
+            ->assertSee('Bộ lọc')
+            ->assertSee('crm-pagination', false)
+            ->assertSee('aria-label="Trang cuối"', false);
         $this->actingAs($admin)->get('/admin/users')->assertOk()->assertSee('phân quyền');
     }
 

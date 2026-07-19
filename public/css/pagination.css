@@ -1,0 +1,47 @@
+.crm-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 18px 10px;
+    gap: 0;
+}
+
+.crm-pagination > a,
+.crm-pagination > span {
+    display: grid;
+    place-items: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 11px;
+    background: #f8f9fa;
+    color: #0665e8;
+    border: 1px solid #d9dee5;
+    border-left: 0;
+    font-size: 16px;
+}
+
+.crm-pagination > a:first-child,
+.crm-pagination > span:first-child {
+    border-left: 1px solid #d9dee5;
+    border-radius: 6px 0 0 6px;
+}
+
+.crm-pagination > a:last-child,
+.crm-pagination > span:last-child {
+    border-radius: 0 6px 6px 0;
+}
+
+.crm-pagination > a:hover { background: #e9f2ff; }
+.crm-pagination > .active { background: #087af5; color: #fff; border-color: #087af5; }
+.crm-pagination > .disabled { color: #8b96a3; background: #edf0f3; cursor: not-allowed; }
+.crm-pagination > .ellipsis { color: #5f6b78; background: #edf0f3; }
+
+@media (max-width: 600px) {
+    .crm-pagination > a,
+    .crm-pagination > span {
+        min-width: 34px;
+        height: 36px;
+        padding: 0 8px;
+        font-size: 14px;
+    }
+}

@@ -31,11 +31,7 @@
 </section>
 
 @if($properties->hasPages())
-<nav class="pagination">
-    @if($properties->onFirstPage())<span>‹ Trước</span>@else<a href="{{ $properties->previousPageUrl() }}">‹ Trước</a>@endif
-    <strong>{{ $properties->currentPage() }} / {{ $properties->lastPage() }}</strong>
-    @if($properties->hasMorePages())<a href="{{ $properties->nextPageUrl() }}">Sau ›</a>@else<span>Sau ›</span>@endif
-</nav>
+    {{ $properties->onEachSide(1)->links('vendor.pagination.crm') }}
 @endif
 
 <div class="drawer-backdrop" data-filter-backdrop></div>
@@ -59,4 +55,3 @@
     </form>
 </aside>
 @endsection
-
