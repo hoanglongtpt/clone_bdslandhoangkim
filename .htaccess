@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Laragon may initially point the generated vhost at the project root.
+    # Route everything through Laravel's public directory and never expose .env/vendor.
+    RewriteRule ^public(?:/|$) - [L]
+    RewriteRule ^$ public/ [L]
+    RewriteRule ^(.+)$ public/$1 [L]
+</IfModule>
+
