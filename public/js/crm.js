@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const mobileNavToggle = document.querySelector('[data-mobile-nav-toggle]');
+    const mobileNav = document.querySelector('[data-mobile-nav]');
+
+    const closeMobileNav = () => {
+        mobileNav?.classList.remove('open');
+        mobileNavToggle?.setAttribute('aria-expanded', 'false');
+        if (mobileNavToggle) mobileNavToggle.textContent = '☰';
+    };
+    mobileNavToggle?.addEventListener('click', event => {
+        event.stopPropagation();
+        const isOpen = mobileNav?.classList.toggle('open');
+        mobileNavToggle.setAttribute('aria-expanded', String(Boolean(isOpen)));
+        mobileNavToggle.textContent = isOpen ? '×' : '☰';
+    });
+    document.addEventListener('click', event => {
+        if (mobileNav?.classList.contains('open') && !mobileNav.contains(event.target) && event.target !== mobileNavToggle) closeMobileNav();
+    });
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 820) closeMobileNav();
+    });
     const drawer = document.querySelector('[data-filter-drawer]');
     const backdrop = document.querySelector('[data-filter-backdrop]');
     const gallery = document.querySelector('[data-gallery-modal]');

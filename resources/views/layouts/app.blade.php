@@ -15,7 +15,8 @@
         <span class="brand-mark">▥</span>
         <span>Hoàng Kim Land CRM</span>
     </a>
-    <nav class="nav-links">
+    <button class="mobile-nav-toggle" type="button" data-mobile-nav-toggle aria-expanded="false" aria-controls="main-navigation" aria-label="Mở menu">☰</button>
+    <nav class="nav-links" id="main-navigation" data-mobile-nav>
         <a class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
         <a class="{{ request()->routeIs('activities.*') ? 'active' : '' }}" href="{{ route('activities.index') }}">Hoạt động</a>
         @can('admin')<a class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">Người dùng</a>@endcan
