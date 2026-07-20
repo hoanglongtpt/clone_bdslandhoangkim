@@ -11,7 +11,19 @@
 html { color-scheme: light; }
 body { background: var(--bg); color: var(--text); }
 
-.topbar { box-shadow: 0 3px 14px #17203322; }
+.topbar {
+    color: #f7f9ff;
+    background: linear-gradient(90deg, #020817 0%, #07142d 55%, #030a1b 100%);
+    border-bottom: 1px solid #263653;
+    box-shadow: 0 4px 18px #07112645;
+}
+.brand { color: #ffdf4f; text-shadow: 0 1px 10px #ffbd1838; }
+.brand-mark { color: #ffc329; filter: drop-shadow(0 0 8px #ffbd1870); }
+.nav-links > a,
+.account-menu > summary { color: #f4f7ff; font-weight: 600; text-shadow: 0 1px 4px #0008; }
+.nav-links > a:hover,
+.account-menu > summary:hover { color: #ffdc55; background: #ffffff0c; }
+.nav-links > a.active { color: #091127; text-shadow: none; }
 .account-popover {
     background: #ffffff;
     color: var(--text);
@@ -76,6 +88,84 @@ body { background: var(--bg); color: var(--text); }
 .media-item:hover { border-color: #7aaaf0; box-shadow: 0 5px 16px #1f6fd228; }
 .media-item:focus-visible { outline: 3px solid #78aef8; outline-offset: 2px; }
 .file-icon { color: #d99100; }
+
+.note-row { grid-template-columns: 42px minmax(0, 1fr) auto; }
+.note-actions { display: flex; gap: 6px; }
+.note-action {
+    min-width: 42px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+}
+.note-action.view { color: #1068dc; border: 1px solid #2977df; }
+.note-action.add { color: #07834e; border: 1px solid #14915c; }
+.note-action:hover { background: #edf5ff; }
+
+.app-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 180;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: #10182799;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .18s ease, visibility .18s ease;
+}
+.app-modal.open { opacity: 1; visibility: visible; }
+.app-modal-dialog {
+    width: min(800px, 96vw);
+    max-height: 88vh;
+    overflow: hidden;
+    border: 1px solid #d7dde5;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--text);
+    box-shadow: 0 24px 70px #10182755;
+}
+.app-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border-bottom: 1px solid #dde2e8;
+}
+.app-modal-head h2 { margin: 0 0 3px; font-size: 19px; }
+.app-modal-head small { color: var(--muted); }
+.app-modal-close { border: 0; background: transparent; color: #667080; font-size: 30px; cursor: pointer; }
+.notes-modal-body { max-height: 65vh; overflow: auto; padding: 14px 16px 18px; }
+.notes-modal-card { border: 1px solid #dce2e9; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+.notes-modal-meta { display: flex; gap: 12px; padding: 9px 12px; background: #f2f5f8; color: #4e5968; }
+.notes-modal-card p { margin: 0; padding: 16px 12px; white-space: pre-wrap; line-height: 1.5; }
+.notes-modal-empty { padding: 28px; text-align: center; }
+.note-add-body { display: grid; gap: 18px; padding: 18px 16px 16px; }
+.quick-note-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px 24px;
+    margin: 0;
+    padding: 14px;
+    border: 1px solid #dce2e9;
+    border-radius: 8px;
+}
+.quick-note-options legend { padding: 0 7px; font-weight: 700; }
+.quick-note-options label { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+.note-content-label { display: grid; gap: 7px; font-weight: 700; }
+.note-content-label textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 11px;
+    border: 1px solid #cfd7e2;
+    border-radius: 7px;
+    background: #ffffff;
+    color: var(--text);
+    font: inherit;
+}
+.app-modal-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 16px; border-top: 1px solid #dde2e8; }
 
 .gallery-modal {
     position: fixed;
@@ -155,4 +245,6 @@ body { background: var(--bg); color: var(--text); }
     .gallery-dialog { width: 100%; height: 86vh; }
     .gallery-nav { width: 42px; height: 56px; font-size: 34px; }
     .gallery-close { width: 40px; height: 40px; }
+    .app-modal { padding: 10px; }
+    .quick-note-options { grid-template-columns: 1fr; }
 }

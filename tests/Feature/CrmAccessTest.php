@@ -24,7 +24,9 @@ class CrmAccessTest extends TestCase
         $this->actingAs($admin)->get('/')->assertOk()
             ->assertSee('Bộ lọc')
             ->assertSee('crm-pagination', false)
-            ->assertSee('aria-label="Trang cuối"', false);
+            ->assertSee('aria-label="Trang cuối"', false)
+            ->assertSee('data-view-notes', false)
+            ->assertSee('data-add-note', false);
         $this->actingAs($admin)->get('/admin/users')->assertOk()->assertSee('phân quyền');
     }
 
@@ -39,6 +41,10 @@ class CrmAccessTest extends TestCase
         $this->actingAs($viewer)->get(route('properties.show', $allowed))->assertOk();
         $this->actingAs($viewer)->get(route('properties.show', $denied))->assertForbidden();
         $this->actingAs($viewer)->get(route('properties.edit', $allowed))->assertForbidden();
+        $this->actingAs($viewer)
+            ->getJson(route('properties.notes.index', [$allowed, '1']))
+            ->assertOk()
+            ->assertJsonStructure(['property' => ['id', 'code'], 'group', 'title', 'notes']);
     }
 
     public function test_direct_property_access_does_not_expose_the_whole_project(): void

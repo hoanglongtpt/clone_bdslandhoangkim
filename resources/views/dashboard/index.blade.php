@@ -21,7 +21,36 @@
         <div class="cell type"><small>LOẠI / DIỆN TÍCH</small><b>LOẠI: {{ $property->property_type ?: '—' }}</b><b>DIỆN TÍCH: {{ $property->area ? rtrim(rtrim(number_format((float)$property->area, 2, ',', '.'), '0'), ',') : '—' }} m²</b><b>Nội thất: {{ $property->interior ?: 'Chưa rõ' }}</b></div>
         <div class="cell status"><small>TRẠNG THÁI</small><span class="status-pill {{ str_contains(mb_strtolower($property->status_new ?? ''), 'đang') ? 'rented' : '' }}">{{ $property->status_new ?: 'Chưa cập nhật' }}</span><b>Hạn thuê: {{ $property->rent_expiry?->format('d/m/Y') ?? '—' }}</b></div>
         <div class="cell prices"><small>GIÁ</small><b class="sell">Bán: {{ $property->price_sell ? number_format((float)$property->price_sell, 0, ',', '.') : '—' }}</b><b class="rent">Thuê: {{ $property->price_rent ? number_format((float)$property->price_rent, 0, ',', '.') : '—' }}</b><b class="commission">Hoa hồng: {{ $property->sales_commission ? number_format((float)$property->sales_commission, 0, ',', '.') : '—' }}</b></div>
-        <div class="cell notes"><small>GHI CHÚ</small><div class="note-row"><b>Bán:</b><span>{{ Str::limit($property->latestSaleNote?->note ?? '—', 58) }}</span><a href="{{ route('properties.show', $property) }}#sale-notes">Xem</a></div><div class="note-row"><b>Thuê:</b><span>{{ Str::limit($property->latestRentNote?->note ?? '—', 58) }}</span><a href="{{ route('properties.show', $property) }}#rent-notes">Xem</a></div></div>
+        <div class="cell notes">
+            <small>GHI CHÚ</small>
+            @foreach([['1', 'Bán:', 'latestSaleNote', 'Ghi chú bán'], ['2', 'Thuê:', 'latestRentNote', 'Ghi chú thuê']] as [$group, $label, $relation, $title])
+                <div class="note-row">
+                    <b>{{ $label }}</b>
+                    <span>{{ Str::limit($property->$relation?->note ?? '—', 58) }}</span>
+                    <div class="note-actions">
+                        <button
+                            type="button"
+                            class="note-action view"
+                            data-view-notes
+                            data-notes-url="{{ route('properties.notes.index', [$property, $group]) }}"
+                            data-note-title="{{ $title }}"
+                            data-property-code="{{ $property->code }}"
+                        >Xem</button>
+                        @if(auth()->user()->canEditProperties())
+                            <button
+                                type="button"
+                                class="note-action add"
+                                data-add-note
+                                data-note-action="{{ route('properties.notes.store', $property) }}"
+                                data-note-group="{{ $group }}"
+                                data-note-title="Thêm {{ mb_strtolower($title) }}"
+                                data-property-code="{{ $property->code }}"
+                            >+ Thêm</button>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
         <div class="cell customers"><small>KHÁCH HÀNG</small>@forelse($property->customers->take(2) as $customer)<b>{{ $customer->full_name }}</b><span class="phone">☎ {{ $customer->phone1 ?: '—' }}</span>@empty<span>—</span>@endforelse</div>
         <div class="cell other"><small>KHÁC</small><span>Cập nhật: {{ $property->updated_date?->format('d/m/Y') ?? '—' }}</span><a class="btn outline-green" href="{{ route('properties.show', $property) }}">Chi tiết</a>@if(auth()->user()->canEditProperties())<a class="btn outline-green" href="{{ route('properties.edit', $property) }}">Chỉnh sửa</a>@endif</div>
     </article>
@@ -32,6 +61,46 @@
 
 @if($properties->hasPages())
     {{ $properties->onEachSide(1)->links('vendor.pagination.crm') }}
+@endif
+
+<div class="app-modal" data-notes-view-modal aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="notes-view-title">
+    <section class="app-modal-dialog notes-view-dialog">
+        <header class="app-modal-head">
+            <div><h2 id="notes-view-title" data-notes-view-title>Ghi chú</h2><small data-notes-view-code></small></div>
+            <button type="button" class="app-modal-close" data-close-notes-view aria-label="Đóng">×</button>
+        </header>
+        <div class="notes-modal-body" data-notes-view-body><p class="muted">Đang tải ghi chú...</p></div>
+    </section>
+</div>
+
+@if(auth()->user()->canEditProperties())
+<div class="app-modal" data-note-add-modal aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="note-add-title">
+    <section class="app-modal-dialog note-add-dialog">
+        <header class="app-modal-head">
+            <div><h2 id="note-add-title" data-note-add-title>Thêm ghi chú</h2><small data-note-add-code></small></div>
+            <button type="button" class="app-modal-close" data-close-note-add aria-label="Đóng">×</button>
+        </header>
+        <form method="post" action="" data-note-add-form>
+            @csrf
+            <input type="hidden" name="note_group" value="1" data-note-group-input>
+            <div class="note-add-body">
+                <fieldset class="quick-note-options">
+                    <legend>Chọn nhanh</legend>
+                    @foreach(['Không nghe máy', 'Thuê bao', 'Bận', 'Cúp máy ngang', 'Số sai', 'Số không tồn tại', 'Không nhu cầu thuê', 'Không nhu cầu bán', 'Không nhu cầu thuê/bán', 'Không nhu cầu mua mới', 'Gặp khách hàng đã hẹn', 'Khác'] as $reason)
+                        <label><input type="radio" name="quick_reason" value="{{ $reason }}" data-note-reason> {{ $reason }}</label>
+                    @endforeach
+                </fieldset>
+                <label class="note-content-label">Ghi chú
+                    <textarea name="note" required maxlength="10000" rows="5" placeholder="Nhập nội dung ghi chú..." data-note-textarea></textarea>
+                </label>
+            </div>
+            <footer class="app-modal-actions">
+                <button class="btn ghost" type="button" data-close-note-add>Đóng</button>
+                <button class="btn primary" type="submit">Lưu lại</button>
+            </footer>
+        </form>
+    </section>
+</div>
 @endif
 
 <div class="drawer-backdrop" data-filter-backdrop></div>

@@ -10,6 +10,30 @@ use Illuminate\Support\Facades\DB;
 
 class NoteController extends Controller
 {
+    public function index(Request $request, Property $property, string $group)
+    {
+        abort_unless(in_array($group, ['1', '2'], true), 404);
+        abort_unless(Property::query()->visibleTo($request->user())->whereKey($property->id)->exists(), 403);
+
+        $notes = $property->notes()
+            ->where('note_group', $group)
+            ->orderByDesc('note_date')
+            ->get()
+            ->map(fn (Note $note) => [
+                'id' => $note->id,
+                'note' => $note->note,
+                'author' => $note->author ?: 'Không rõ',
+                'note_date' => $note->note_date?->format('d/m/Y H:i'),
+            ]);
+
+        return response()->json([
+            'property' => ['id' => $property->id, 'code' => $property->code],
+            'group' => $group,
+            'title' => $group === '1' ? 'Ghi chú bán' : 'Ghi chú thuê',
+            'notes' => $notes,
+        ]);
+    }
+
     public function store(Request $request, Property $property)
     {
         abort_unless($request->user()->canEditProperties(), 403);
