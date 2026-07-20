@@ -18,7 +18,6 @@ class MediaController extends Controller
             ->orderBy('source_id')
             ->get()
             ->map(fn (Media $media) => [
-                'id' => $media->id,
                 'src' => route('media.show', $media),
             ]);
 
