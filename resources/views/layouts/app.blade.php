@@ -7,6 +7,7 @@
     <title>@yield('title', 'Dashboard') · Hoàng Kim Land CRM</title>
     <link rel="stylesheet" href="{{ asset('css/crm.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/light-theme.css') }}">
 </head>
 <body>
 <header class="topbar">
