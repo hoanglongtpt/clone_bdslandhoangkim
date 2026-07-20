@@ -44,6 +44,10 @@ class CrmAccessTest extends TestCase
         $this->actingAs($viewer)->get(route('properties.show', $allowed))->assertOk();
         $this->actingAs($viewer)->get(route('properties.show', $denied))->assertForbidden();
         $this->actingAs($viewer)->get(route('properties.edit', $allowed))->assertForbidden();
+        $this->actingAs($viewer)->get('/')->assertOk()
+            ->assertSee('data-dashboard-gallery', false)
+            ->assertSee(route('properties.images', $allowed), false);
+        $this->actingAs($viewer)->getJson(route('properties.images', $allowed))->assertOk()->assertJsonStructure(['property', 'images']);
         $this->actingAs($viewer)
             ->getJson(route('properties.notes.index', [$allowed, '1']))
             ->assertOk()

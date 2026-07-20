@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const galleryItems = [...document.querySelectorAll('[data-gallery-item]')];
     const galleryImage = gallery?.querySelector('[data-gallery-image]');
     const galleryCounter = gallery?.querySelector('[data-gallery-counter]');
+    const galleryProperty = gallery?.querySelector('[data-gallery-property]');
+    const galleryDownload = gallery?.querySelector('[data-gallery-download]');
+    const dashboardGalleryButtons = [...document.querySelectorAll('[data-dashboard-gallery]')];
     const notesViewModal = document.querySelector('[data-notes-view-modal]');
     const noteAddModal = document.querySelector('[data-note-add-modal]');
     const noteAddForm = noteAddModal?.querySelector('[data-note-add-form]');
@@ -53,7 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!galleryItems.length || !galleryImage) return;
         currentImage = (index + galleryItems.length) % galleryItems.length;
         const item = galleryItems[currentImage];
-        galleryImage.src = item.dataset.gallerySrc;
+        const source = item.dataset?.gallerySrc || item.src;
+        galleryImage.src = source;
+        if (galleryDownload) galleryDownload.href = source;
         if (galleryCounter) galleryCounter.textContent = `${currentImage + 1} / ${galleryItems.length}`;
     };
     const openGallery = index => {
@@ -157,6 +162,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-close-filter]').forEach(button => button.addEventListener('click', closeDrawer));
     backdrop?.addEventListener('click', closeDrawer);
     galleryItems.forEach((item, index) => item.addEventListener('click', () => openGallery(index)));
+    dashboardGalleryButtons.forEach(button => button.addEventListener('click', async () => {
+        if (!gallery) return;
+        button.disabled = true;
+        try {
+            const response = await fetch(button.dataset.galleryUrl, { headers: { Accept: 'application/json' } });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const payload = await response.json();
+            galleryItems.splice(0, galleryItems.length, ...(payload.images || []));
+            if (!galleryItems.length) throw new Error('Không có ảnh');
+            if (galleryProperty) galleryProperty.textContent = payload.property || button.dataset.propertyCode || '';
+            openGallery(0);
+        } catch (error) {
+            window.alert('Không thể tải hình ảnh của căn này. Vui lòng thử lại.');
+        } finally {
+            button.disabled = false;
+        }
+    }));
     gallery?.querySelector('[data-gallery-close]')?.addEventListener('click', closeGallery);
     gallery?.querySelector('[data-gallery-prev]')?.addEventListener('click', () => renderImage(currentImage - 1));
     gallery?.querySelector('[data-gallery-next]')?.addEventListener('click', () => renderImage(currentImage + 1));

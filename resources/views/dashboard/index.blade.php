@@ -14,7 +14,10 @@
     <article class="property-card">
         <div class="property-image">
             @if($property->firstImage)
-                <img loading="lazy" src="{{ route('media.show', $property->firstImage) }}" alt="{{ $property->code }}">
+                <button class="dashboard-image-button" type="button" data-dashboard-gallery data-gallery-url="{{ route('properties.images', $property) }}" data-property-code="{{ $property->code }}" aria-label="Xem ảnh căn {{ $property->code }}">
+                    <img loading="lazy" src="{{ route('media.show', $property->firstImage) }}" alt="{{ $property->code }}">
+                    <span class="image-zoom-hint">⌕ Xem ảnh</span>
+                </button>
             @else<span>No image</span>@endif
         </div>
         <div class="cell info"><small>THÔNG TIN</small><strong>{{ $property->code }}</strong><b>{{ $property->project?->project_name ?? '—' }}</b><b>THÁP {{ $property->tower ?? '—' }}</b><b>TẦNG {{ $property->floor ?? '—' }}</b><b>SỐ {{ $property->room ?? '—' }}</b></div>
@@ -102,6 +105,20 @@
     </section>
 </div>
 @endif
+
+<div class="gallery-modal dashboard-gallery-modal" data-gallery-modal data-dynamic-gallery aria-hidden="true" role="dialog" aria-modal="true" aria-label="Hình ảnh căn hộ">
+    <div class="dashboard-gallery-shell">
+        <header class="dashboard-gallery-head">
+            <div><strong>Hình ảnh căn hộ</strong><small data-gallery-property></small></div>
+            <div class="dashboard-gallery-tools"><a class="btn ghost gallery-download" data-gallery-download href="#" download>⇩ Tải ảnh</a><button class="gallery-head-close" type="button" data-gallery-close aria-label="Đóng">×</button></div>
+        </header>
+        <div class="gallery-dialog">
+            <button class="gallery-nav gallery-prev" type="button" data-gallery-prev aria-label="Ảnh trước">‹</button>
+            <figure class="gallery-stage"><img data-gallery-image src="" alt="Hình ảnh căn hộ"><figcaption data-gallery-counter></figcaption></figure>
+            <button class="gallery-nav gallery-next" type="button" data-gallery-next aria-label="Ảnh tiếp theo">›</button>
+        </div>
+    </div>
+</div>
 
 <div class="drawer-backdrop" data-filter-backdrop></div>
 <aside class="filter-drawer" data-filter-drawer>

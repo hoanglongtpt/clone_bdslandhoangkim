@@ -28,6 +28,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update');
     Route::get('/properties/{property}/notes/{group}', [NoteController::class, 'index'])->name('properties.notes.index');
     Route::post('/properties/{property}/notes', [NoteController::class, 'store'])->name('properties.notes.store');
+    Route::get('/properties/{property}/images', [MediaController::class, 'propertyImages'])->name('properties.images');
     Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
     Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
 

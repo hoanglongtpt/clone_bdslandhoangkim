@@ -9,6 +9,22 @@ use Illuminate\Support\Facades\File;
 
 class MediaController extends Controller
 {
+    public function propertyImages(Request $request, Property $property)
+    {
+        abort_unless(Property::query()->visibleTo($request->user())->whereKey($property->id)->exists(), 403);
+
+        $images = $property->media()
+            ->where('media_type', 'image')
+            ->orderBy('source_id')
+            ->get()
+            ->map(fn (Media $media) => [
+                'id' => $media->id,
+                'src' => route('media.show', $media),
+            ]);
+
+        return response()->json(['property' => $property->code, 'images' => $images]);
+    }
+
     public function show(Request $request, Media $media)
     {
         abort_unless(Property::query()->visibleTo($request->user())->whereKey($media->property_id)->exists(), 403);
