@@ -22,9 +22,10 @@
         <details class="account-menu">
             <summary>♟ {{ auth()->user()->name }}</summary>
             <div class="account-popover">
-                <small>{{ auth()->user()->email }}</small>
-                <span class="role-chip">{{ strtoupper(auth()->user()->role) }}</span>
-                <form method="post" action="{{ route('logout') }}">@csrf<button type="submit">Đăng xuất</button></form>
+                <div class="account-summary"><strong>{{ auth()->user()->username ?: auth()->user()->name }}</strong><small>{{ auth()->user()->email }}</small><span class="role-chip">{{ strtoupper(auth()->user()->role) }}</span></div>
+                <a href="{{ route('profile.show') }}">👤 Hồ sơ</a>
+                <a href="{{ route('notes.history') }}">📝 Lịch sử ghi chú</a>
+                <form method="post" action="{{ route('logout') }}">@csrf<button class="logout-button" type="submit">Đăng xuất</button></form>
             </div>
         </details>
     </nav>

@@ -28,6 +28,9 @@ class CrmAccessTest extends TestCase
             ->assertSee('data-view-notes', false)
             ->assertSee('data-add-note', false);
         $this->actingAs($admin)->get('/admin/users')->assertOk()->assertSee('phân quyền');
+        $this->actingAs($admin)->get(route('profile.show'))->assertOk()->assertSee('Thông tin cá nhân');
+        $this->actingAs($admin)->get(route('notes.history'))->assertOk()->assertSee('Ghi chú của tôi');
+        $this->actingAs($admin)->get(route('profile.avatar'))->assertNotFound();
     }
 
     public function test_viewer_is_limited_to_assigned_project(): void

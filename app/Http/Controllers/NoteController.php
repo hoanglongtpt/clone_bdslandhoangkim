@@ -43,7 +43,8 @@ class NoteController extends Controller
             $nextId = ((int) Note::query()->lockForUpdate()->max('id')) + 1;
 
             return Note::create(['id' => $nextId, 'property_id' => $property->id, 'note_group' => $data['note_group'],
-                'note' => $data['note'], 'note_date' => now(), 'author' => $request->user()->name]);
+                'note' => $data['note'], 'note_date' => now(), 'author' => $request->user()->name,
+                'user_id' => $request->user()->id]);
         });
         ActivityLog::record('note.created', $note, "Thêm ghi chú cho căn {$property->code}");
 

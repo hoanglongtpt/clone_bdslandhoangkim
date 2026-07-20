@@ -19,7 +19,18 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
+        'avatar_path',
+        'birthday',
+        'gender',
+        'phone1',
+        'phone2',
+        'zalo',
+        'skype',
+        'facebook',
+        'address',
+        'bio',
         'password',
         'role',
         'is_active',
@@ -44,6 +55,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
+        'birthday' => 'date',
     ];
 
     public function projects()
