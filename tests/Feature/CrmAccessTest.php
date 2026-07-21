@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Property;
 use App\Models\User;
@@ -75,5 +76,25 @@ class CrmAccessTest extends TestCase
             'code' => $property->code,
             'project_id' => Project::where('id', '<>', 3)->value('id'),
         ])->assertForbidden();
+    }
+
+    public function test_members_can_add_customers_but_only_admin_can_remove_them(): void
+    {
+        $property = Property::firstOrFail();
+        $member = User::factory()->create(['password' => 'password', 'role' => 'viewer', 'is_active' => true]);
+        $member->properties()->attach($property->id);
+
+        $this->actingAs($member)->post(route('properties.customers.store', $property), [
+            'full_name' => 'Khách hàng thử nghiệm', 'phone1' => '0912 345 678',
+        ])->assertRedirect();
+
+        $customer = Customer::query()->where('phone1', '0912345678')->firstOrFail();
+        $this->assertDatabaseHas('property_customers', ['property_id' => $property->id, 'customer_id' => $customer->id]);
+        $this->actingAs($member)->delete(route('properties.customers.destroy', [$property, $customer]))->assertForbidden();
+        $this->assertDatabaseHas('property_customers', ['property_id' => $property->id, 'customer_id' => $customer->id]);
+
+        $admin = User::factory()->create(['password' => 'password', 'role' => 'admin', 'is_active' => true]);
+        $this->actingAs($admin)->delete(route('properties.customers.destroy', [$property, $customer]))->assertRedirect();
+        $this->assertDatabaseMissing('property_customers', ['property_id' => $property->id, 'customer_id' => $customer->id]);
     }
 }

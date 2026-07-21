@@ -9,6 +9,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NoteHistoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PropertyCustomerController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -28,6 +29,8 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update');
     Route::get('/properties/{property}/notes/{group}', [NoteController::class, 'index'])->name('properties.notes.index');
     Route::post('/properties/{property}/notes', [NoteController::class, 'store'])->name('properties.notes.store');
+    Route::post('/properties/{property}/customers', [PropertyCustomerController::class, 'store'])->name('properties.customers.store');
+    Route::delete('/properties/{property}/customers/{customer}', [PropertyCustomerController::class, 'destroy'])->name('properties.customers.destroy');
     Route::get('/properties/{property}/images', [MediaController::class, 'propertyImages'])->name('properties.images');
     Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
     Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');

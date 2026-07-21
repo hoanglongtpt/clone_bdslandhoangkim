@@ -512,3 +512,24 @@ body { background: var(--bg); color: var(--text); }
     .dashboard-gallery-shell .gallery-next { right: 4px; }
     .gallery-download { padding: 7px 9px; font-size: 12px; }
 }
+
+.customer-cell-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.customer-cell-head small { margin: 0; }
+.customer-add-button { padding: 3px 8px; border: 1px solid #14915c; border-radius: 6px; background: #fff; color: #07834e; font-size: 12px; cursor: pointer; }
+.customer-add-button:hover { background: #eaf8f1; }
+.dashboard-customer { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding-bottom: 4px; border-bottom: 1px dashed #e0e5eb; }
+.dashboard-customer > div { min-width: 0; display: grid; gap: 4px; }
+.dashboard-customer b { overflow-wrap: anywhere; }
+.customer-delete-button { width: 24px; height: 24px; padding: 0; border: 1px solid #ef5264; border-radius: 5px; background: #fff; color: #d72d42; font-size: 17px; line-height: 1; cursor: pointer; }
+.customer-delete-button:hover { background: #fff0f2; }
+.customer-more { color: var(--muted); }
+.customer-modal-dialog { width: min(520px, 96vw); }
+.customer-modal-body { display: grid; gap: 15px; padding: 18px 16px; }
+.customer-modal-body label { display: grid; gap: 7px; font-weight: 700; }
+.customer-modal-body input { width: 100%; padding: 11px 12px; border: 1px solid #cfd7e2; border-radius: 7px; background: #fff; color: var(--text); }
+.required { color: #d72d42; }
+
+@media (max-width: 820px) {
+    .customer-add-button { min-height: 32px; padding: 5px 10px; }
+    .customer-modal-dialog { width: 100%; }
+}

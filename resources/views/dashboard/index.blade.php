@@ -54,7 +54,18 @@
                 </div>
             @endforeach
         </div>
-        <div class="cell customers"><small>KHÁCH HÀNG</small>@forelse($property->customers->take(2) as $customer)<b>{{ $customer->full_name }}</b><span class="phone">☎ {{ $customer->phone1 ?: '—' }}</span>@empty<span>—</span>@endforelse</div>
+        <div class="cell customers">
+            <div class="customer-cell-head"><small>KHÁCH HÀNG</small><button type="button" class="customer-add-button" data-add-customer data-customer-action="{{ route('properties.customers.store', $property) }}" data-property-code="{{ $property->code }}">+ Thêm</button></div>
+            @forelse($property->customers->take(2) as $customer)
+                <div class="dashboard-customer">
+                    <div><b>{{ $customer->full_name }}</b><span class="phone">☎ {{ $customer->phone1 ?: '—' }}</span></div>
+                    @if(auth()->user()->isAdmin())
+                        <form method="post" action="{{ route('properties.customers.destroy', [$property, $customer]) }}" onsubmit="return confirm('Xóa khách hàng này khỏi căn {{ $property->code }}?')">@csrf @method('DELETE')<button class="customer-delete-button" type="submit" title="Xóa khách hàng" aria-label="Xóa {{ $customer->full_name }}">×</button></form>
+                    @endif
+                </div>
+            @empty<span>—</span>@endforelse
+            @if($property->customers->count() > 2)<small class="customer-more">+{{ $property->customers->count() - 2 }} khách khác</small>@endif
+        </div>
         <div class="cell other"><small>KHÁC</small><span>Cập nhật: {{ $property->updated_date?->format('d/m/Y') ?? '—' }}</span><a class="btn outline-green" href="{{ route('properties.show', $property) }}">Chi tiết</a>@if(auth()->user()->canEditProperties())<a class="btn outline-green" href="{{ route('properties.edit', $property) }}">Chỉnh sửa</a>@endif</div>
     </article>
 @empty
@@ -118,6 +129,20 @@
             <button class="gallery-nav gallery-next" type="button" data-gallery-next aria-label="Ảnh tiếp theo">›</button>
         </div>
     </div>
+</div>
+
+<div class="app-modal customer-modal" data-customer-modal aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="customer-modal-title">
+    <section class="app-modal-dialog customer-modal-dialog">
+        <header class="app-modal-head"><div><h2 id="customer-modal-title">Thêm khách hàng</h2><small data-customer-property-code></small></div><button type="button" class="app-modal-close" data-close-customer-modal aria-label="Đóng">×</button></header>
+        <form method="post" action="" data-customer-form>
+            @csrf
+            <div class="customer-modal-body">
+                <label>Họ tên <span class="required">*</span><input name="full_name" required maxlength="255" autocomplete="name" placeholder="Nhập họ tên khách hàng"></label>
+                <label>Số điện thoại <span class="required">*</span><input name="phone1" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="Ví dụ: 0912345678"></label>
+            </div>
+            <footer class="app-modal-actions"><button class="btn ghost" type="button" data-close-customer-modal>Đóng</button><button class="btn primary" type="submit">Lưu khách hàng</button></footer>
+        </form>
+    </section>
 </div>
 
 <div class="drawer-backdrop" data-filter-backdrop></div>

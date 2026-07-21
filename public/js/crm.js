@@ -32,12 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteAddModal = document.querySelector('[data-note-add-modal]');
     const noteAddForm = noteAddModal?.querySelector('[data-note-add-form]');
     const noteTextarea = noteAddModal?.querySelector('[data-note-textarea]');
+    const customerModal = document.querySelector('[data-customer-modal]');
+    const customerForm = customerModal?.querySelector('[data-customer-form]');
+    const customerPropertyCode = customerModal?.querySelector('[data-customer-property-code]');
     let currentImage = 0;
     let previousQuickReason = '';
 
     const syncBodyLock = () => {
         const overlayOpen = drawer?.classList.contains('open') || gallery?.classList.contains('open')
-            || notesViewModal?.classList.contains('open') || noteAddModal?.classList.contains('open');
+            || notesViewModal?.classList.contains('open') || noteAddModal?.classList.contains('open')
+            || customerModal?.classList.contains('open');
         document.body.classList.toggle('no-scroll', Boolean(overlayOpen));
     };
 
@@ -159,6 +163,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
 
     document.querySelectorAll('[data-open-filter]').forEach(button => button.addEventListener('click', openDrawer));
+    document.querySelectorAll('[data-add-customer]').forEach(button => button.addEventListener('click', () => {
+        if (!customerModal || !customerForm) return;
+        customerForm.action = button.dataset.customerAction;
+        customerForm.reset();
+        if (customerPropertyCode) customerPropertyCode.textContent = button.dataset.propertyCode || '';
+        openModal(customerModal);
+    }));
+    document.querySelectorAll('[data-close-customer-modal]').forEach(button => button.addEventListener('click', () => closeModal(customerModal)));
     document.querySelectorAll('[data-close-filter]').forEach(button => button.addEventListener('click', closeDrawer));
     backdrop?.addEventListener('click', closeDrawer);
     galleryItems.forEach((item, index) => item.addEventListener('click', () => openGallery(index)));
@@ -192,6 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     noteAddModal?.addEventListener('click', event => {
         if (event.target === noteAddModal) closeModal(noteAddModal);
+    customerModal?.addEventListener('click', event => {
+        if (event.target === customerModal) closeModal(customerModal);
+    });
     });
 
     document.addEventListener('keydown', event => {
@@ -208,6 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (noteAddModal?.classList.contains('open')) {
             if (event.key === 'Escape') closeModal(noteAddModal);
             return;
+        if (customerModal?.classList.contains('open')) {
+            if (event.key === 'Escape') closeModal(customerModal);
+            return;
+        }
         }
         if (event.key === 'Escape') closeDrawer();
     });
