@@ -558,3 +558,40 @@ body { background: var(--bg); color: var(--text); }
     .activity-filter input { min-width: 0; width: 100%; flex-basis: 100%; }
     .activity-filter .btn { flex: 1; }
 }
+
+/* Laptop dashboard: keep all eight columns visible without horizontal clipping. */
+@media (max-width: 1600px) and (min-width: 1151px) {
+    .property-card { grid-template-columns: 90px 145px 145px 140px 135px minmax(235px, 1.7fr) minmax(180px, 1.2fr) 145px; font-size: 12px; }
+    .property-image { padding: 6px; }
+    .property-image img, .property-image span { height: 86px; }
+    .cell { padding: 8px 7px; }
+    .note-action { min-width: 38px; padding: 3px 5px; }
+    .btn.outline-green { padding-right: 7px; padding-left: 7px; }
+}
+@media (max-width: 1150px) and (min-width: 821px) {
+    .property-list { padding: 8px; }
+    .property-card { grid-template-columns: 105px repeat(3, minmax(0, 1fr)); font-size: 12px; }
+    .property-card .cell { border-bottom: 1px solid var(--line); }
+    .property-card .notes { grid-column: span 2; }
+    .property-card .customers, .property-card .other { grid-column: span 1; }
+    .property-image img, .property-image span { height: 100px; }
+}
+
+.media-entry { position: relative; min-width: 0; }
+.media-entry .media-item { width: 100%; }
+.media-delete-button { position: absolute; z-index: 3; top: 5px; right: 5px; width: 28px; height: 28px; border: 1px solid #ff6978; border-radius: 50%; background: #fff; color: #d92339; font-size: 19px; line-height: 1; cursor: pointer; box-shadow: 0 2px 8px #0003; }
+.media-delete-button:hover { background: #ffecef; }
+.media-modal-delete, .btn.danger { border-color: #d9364b; background: #d9364b; color: #fff; }
+.media-modal-delete:hover, .btn.danger:hover { background: #b91f34; }
+.dashboard-gallery-tools form[hidden] { display: none; }
+.user-search-form { display: flex; gap: 9px; padding: 14px; }
+.user-search-form input { min-width: 280px; flex: 1; padding: 10px 12px; border: 1px solid #cfd7e2; border-radius: 6px; background: #fff; color: var(--text); }
+.user-row-actions { display: flex; align-items: center; gap: 7px; }
+.user-row-actions form { margin: 0; }
+.user-row-actions .btn { padding: 5px 10px; white-space: nowrap; }
+
+@media (max-width: 700px) {
+    .user-search-form { flex-wrap: wrap; }
+    .user-search-form input { min-width: 0; width: 100%; flex-basis: 100%; }
+    .user-search-form .btn { flex: 1; }
+}

@@ -14,9 +14,20 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::withCount(['projects', 'properties'])->orderBy('name')->paginate(30);
+        $search = $request->string('q')->trim()->toString();
+        $users = User::query()
+            ->withCount(['projects', 'properties'])
+            ->when($search !== '', function ($query) use ($search) {
+                $term = '%'.$search.'%';
+                $query->where(function ($userQuery) use ($term) {
+                    $userQuery->where('name', 'like', $term)
+                        ->orWhere('username', 'like', $term)
+                        ->orWhere('email', 'like', $term);
+                });
+            })
+            ->orderBy('name')->paginate(30)->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }
@@ -70,6 +81,31 @@ class UserController extends Controller
         ActivityLog::record('user.updated', $user, "Cập nhật quyền {$user->email}");
 
         return redirect()->route('admin.users.index')->with('success', 'Đã cập nhật tài khoản và phạm vi truy cập.');
+    }
+
+    public function destroy(User $user)
+    {
+        if ($user->is(auth()->user())) {
+            throw ValidationException::withMessages(['user' => 'Không thể tự xóa tài khoản đang đăng nhập.']);
+        }
+        if ($user->role === 'admin' && $user->is_active
+            && User::where('role', 'admin')->where('is_active', true)->count() <= 1) {
+            throw ValidationException::withMessages(['user' => 'Hệ thống phải còn ít nhất một quản trị viên đang hoạt động.']);
+        }
+
+        $email = $user->email;
+        $avatar = $user->avatar_path;
+        DB::transaction(function () use ($user) {
+            $user->projects()->detach();
+            $user->properties()->detach();
+            $user->delete();
+        });
+        if ($avatar && str_starts_with($avatar, 'avatars/')) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($avatar);
+        }
+        ActivityLog::record('user.deleted', null, "Xóa tài khoản {$email}");
+
+        return redirect()->route('admin.users.index')->with('success', 'Đã xóa tài khoản.');
     }
 
     private function validateUser(Request $request, ?User $user = null): array

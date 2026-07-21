@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const galleryProperty = gallery?.querySelector('[data-gallery-property]');
     const galleryDownload = gallery?.querySelector('[data-gallery-download]');
     const dashboardGalleryButtons = [...document.querySelectorAll('[data-dashboard-gallery]')];
+    const galleryDeleteForm = gallery?.querySelector('[data-gallery-delete-form]');
     const notesViewModal = document.querySelector('[data-notes-view-modal]');
     const noteAddModal = document.querySelector('[data-note-add-modal]');
     const noteAddForm = noteAddModal?.querySelector('[data-note-add-form]');
@@ -63,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const source = item.dataset?.gallerySrc || item.src;
         galleryImage.src = source;
         if (galleryDownload) galleryDownload.href = source;
+        if (galleryDeleteForm) {
+            galleryDeleteForm.action = item.delete_url || '';
+            galleryDeleteForm.hidden = !item.delete_url;
+        }
         if (galleryCounter) galleryCounter.textContent = `${currentImage + 1} / ${galleryItems.length}`;
     };
     const openGallery = index => {

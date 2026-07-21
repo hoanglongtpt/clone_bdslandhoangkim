@@ -27,6 +27,7 @@
         <div class="media-grid">
             @forelse($displayMedia as $media)
                 @if($media->media_type === 'image')
+                    <div class="media-entry">
                     <button
                         class="media-item media-image-button"
                         type="button"
@@ -38,6 +39,10 @@
                         <img loading="lazy" src="{{ route('media.show', $media) }}" alt="Ảnh {{ $property->code }}">
                         <span>ảnh</span>
                     </button>
+                    @if(auth()->user()->isAdmin())
+                        <form method="post" action="{{ route('properties.images.destroy', [$property, $media]) }}" onsubmit="return confirm('Xóa ảnh này khỏi căn {{ $property->code }}?')">@csrf @method('DELETE')<button class="media-delete-button" type="submit" title="Xóa ảnh" aria-label="Xóa ảnh">×</button></form>
+                    @endif
+                    </div>
                     @php($imageIndex++)
                 @else
                     <a class="media-item" href="{{ route('media.show', $media) }}" target="_blank" rel="noopener">

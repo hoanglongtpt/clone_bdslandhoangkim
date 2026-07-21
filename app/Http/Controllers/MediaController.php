@@ -25,9 +25,10 @@ class MediaController extends Controller
             ->where('media_type', 'image')
             ->orderBy('source_id')
             ->get()
-            ->map(fn (Media $media) => [
+            ->map(fn (Media $media) => array_filter([
                 'src' => route('media.show', $media),
-            ]);
+                'delete_url' => $request->user()->isAdmin() ? route('properties.images.destroy', [$property, $media]) : null,
+            ]));
 
         return response()->json(['property' => $property->code, 'images' => $images]);
     }
@@ -35,7 +36,6 @@ class MediaController extends Controller
     public function store(Request $request, Property $property)
     {
         $this->authorizeProperty($request, $property);
-        abort_unless($request->user()->canEditProperties(), 403);
         $request->validate([
             'images' => ['required', 'array', 'min:1', 'max:20'],
             'images.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
@@ -66,6 +66,23 @@ class MediaController extends Controller
         ActivityLog::record('media.uploaded', $property, 'Tải '.count($uploaded)." ảnh lên căn {$property->code}", ['paths' => $uploaded]);
 
         return back()->with('success', 'Đã tải lên '.count($uploaded).' ảnh.');
+    }
+
+    public function destroy(Request $request, Property $property, Media $media)
+    {
+        $this->authorizeProperty($request, $property);
+        abort_unless($request->user()->isAdmin(), 403);
+        abort_unless((int) $media->property_id === (int) $property->id && $media->media_type === 'image', 404);
+
+        $storagePath = str_starts_with((string) $media->local_path, 'storage:')
+            ? Str::after((string) $media->local_path, 'storage:') : null;
+        $media->delete();
+        if ($storagePath && str_starts_with($storagePath, 'property-media/')) {
+            Storage::disk('local')->delete($storagePath);
+        }
+        ActivityLog::record('media.deleted', $property, "Xóa ảnh khỏi căn {$property->code}", ['media_key' => $media->getKey()]);
+
+        return back()->with('success', 'Đã xóa ảnh.');
     }
 
     public function show(Request $request, Media $media)

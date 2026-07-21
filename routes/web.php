@@ -33,10 +33,11 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::delete('/properties/{property}/customers/{customer}', [PropertyCustomerController::class, 'destroy'])->name('properties.customers.destroy');
     Route::get('/properties/{property}/images', [MediaController::class, 'propertyImages'])->name('properties.images');
     Route::post('/properties/{property}/images', [MediaController::class, 'store'])->name('properties.images.store');
+    Route::delete('/properties/{property}/images/{media}', [MediaController::class, 'destroy'])->name('properties.images.destroy');
     Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
     Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
 
     Route::middleware('can:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::resource('users', UserController::class)->except(['show', 'destroy']);
+        Route::resource('users', UserController::class)->except(['show']);
     });
 });

@@ -102,7 +102,7 @@ class CrmAccessTest extends TestCase
         $this->assertDatabaseMissing('property_customers', ['property_id' => $property->id, 'customer_id' => $customer->id]);
     }
 
-    public function test_managers_can_upload_property_images_but_viewers_cannot(): void
+    public function test_members_can_upload_images_but_only_admin_can_delete_them(): void
     {
         Storage::fake('local');
         $property = Property::firstOrFail();
@@ -120,8 +120,15 @@ class CrmAccessTest extends TestCase
         $viewer = User::factory()->create(['password' => 'password', 'role' => 'viewer', 'is_active' => true]);
         $viewer->properties()->attach($property->id);
         $this->actingAs($viewer)->post(route('properties.images.store', $property), [
-            'images' => [UploadedFile::fake()->image('blocked.jpg')],
-        ])->assertForbidden();
+            'images' => [UploadedFile::fake()->image('member-image.jpg')],
+        ])->assertRedirect();
+        $this->actingAs($viewer)->delete(route('properties.images.destroy', [$property, $media]))->assertForbidden();
+
+        $admin = User::factory()->create(['password' => 'password', 'role' => 'admin', 'is_active' => true]);
+        $storedPath = Str::after($media->local_path, 'storage:');
+        $this->actingAs($admin)->delete(route('properties.images.destroy', [$property, $media]))->assertRedirect();
+        $this->assertDatabaseMissing('media', ['media_key' => $media->getKey()]);
+        Storage::disk('local')->assertMissing($storedPath);
     }
 
     public function test_admin_can_filter_activities_by_employee_name_or_email(): void
@@ -142,5 +149,26 @@ class CrmAccessTest extends TestCase
             ->assertOk()
             ->assertSee('filter-target-action')
             ->assertDontSee('filter-other-action');
+    }
+    public function test_admin_can_search_and_delete_users_but_cannot_delete_self(): void
+    {
+        $admin = User::factory()->create(['password' => 'password', 'role' => 'admin', 'is_active' => true]);
+        $target = User::factory()->create([
+            'password' => 'password', 'name' => 'Nhân viên cần xóa',
+            'email' => 'delete.employee@example.test', 'role' => 'viewer', 'is_active' => true,
+        ]);
+        $other = User::factory()->create([
+            'password' => 'password', 'name' => 'Nhân viên giữ lại',
+            'email' => 'keep.employee@example.test', 'role' => 'viewer', 'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)->get(route('admin.users.index', ['q' => 'delete.employee']))
+            ->assertOk()->assertSee($target->email)->assertDontSee($other->email)
+            ->assertSee('value="delete.employee"', false);
+        $this->actingAs($admin)->delete(route('admin.users.destroy', $admin))->assertSessionHasErrors('user');
+        $this->assertDatabaseHas('users', ['id' => $admin->id]);
+
+        $this->actingAs($admin)->delete(route('admin.users.destroy', $target))->assertRedirect(route('admin.users.index'));
+        $this->assertDatabaseMissing('users', ['id' => $target->id]);
     }
 }

@@ -121,7 +121,13 @@
     <div class="dashboard-gallery-shell">
         <header class="dashboard-gallery-head">
             <div><strong>Hình ảnh căn hộ</strong><small data-gallery-property></small></div>
-            <div class="dashboard-gallery-tools"><a class="btn ghost gallery-download" data-gallery-download href="#" download>⇩ Tải ảnh</a><button class="gallery-head-close" type="button" data-gallery-close aria-label="Đóng">×</button></div>
+            <div class="dashboard-gallery-tools">
+                <a class="btn ghost gallery-download" data-gallery-download href="#" download>⇩ Tải ảnh</a>
+                @if(auth()->user()->isAdmin())
+                    <form method="post" action="" data-gallery-delete-form onsubmit="return confirm('Xóa ảnh đang xem?')">@csrf @method('DELETE')<button class="btn media-modal-delete" type="submit">Xóa ảnh</button></form>
+                @endif
+                <button class="gallery-head-close" type="button" data-gallery-close aria-label="Đóng">×</button>
+            </div>
         </header>
         <div class="gallery-dialog">
             <button class="gallery-nav gallery-prev" type="button" data-gallery-prev aria-label="Ảnh trước">‹</button>

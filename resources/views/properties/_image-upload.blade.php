@@ -1,4 +1,3 @@
-@if(auth()->user()->canEditProperties())
 <form method="post" action="{{ route('properties.images.store', $property) }}" enctype="multipart/form-data" class="image-upload-form">
     @csrf
     <label class="image-upload-picker">
@@ -8,4 +7,3 @@
     </label>
     <div class="image-upload-actions"><span class="muted" data-image-upload-count>Chưa chọn ảnh</span><button class="btn primary" type="submit">↑ Tải ảnh lên</button></div>
 </form>
-@endif
