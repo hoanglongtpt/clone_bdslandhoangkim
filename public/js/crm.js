@@ -230,5 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (event.key === 'Escape') closeDrawer();
     });
+
+    document.querySelectorAll('[data-image-upload-input]').forEach(input => input.addEventListener('change', () => {
+        const count = input.files?.length || 0;
+        const label = input.closest('.image-upload-form')?.querySelector('[data-image-upload-count]');
+        if (label) label.textContent = count ? `Đã chọn ${count} ảnh` : 'Chưa chọn ảnh';
+    }));
 });
 

@@ -23,6 +23,7 @@
     @endphp
     <section class="panel" id="media">
         <h2>Hình ảnh & tài liệu <span class="count">{{ $property->media->count() }}</span></h2>
+        @include('properties._image-upload', ['property' => $property])
         <div class="media-grid">
             @forelse($displayMedia as $media)
                 @if($media->media_type === 'image')

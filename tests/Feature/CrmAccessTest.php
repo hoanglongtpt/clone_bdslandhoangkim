@@ -7,6 +7,9 @@ use App\Models\Project;
 use App\Models\Property;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class CrmAccessTest extends TestCase
@@ -96,5 +99,27 @@ class CrmAccessTest extends TestCase
         $admin = User::factory()->create(['password' => 'password', 'role' => 'admin', 'is_active' => true]);
         $this->actingAs($admin)->delete(route('properties.customers.destroy', [$property, $customer]))->assertRedirect();
         $this->assertDatabaseMissing('property_customers', ['property_id' => $property->id, 'customer_id' => $customer->id]);
+    }
+
+    public function test_managers_can_upload_property_images_but_viewers_cannot(): void
+    {
+        Storage::fake('local');
+        $property = Property::firstOrFail();
+        $manager = User::factory()->create(['password' => 'password', 'role' => 'manager', 'is_active' => true]);
+        $manager->properties()->attach($property->id);
+
+        $this->actingAs($manager)->post(route('properties.images.store', $property), [
+            'images' => [UploadedFile::fake()->image('living-room.jpg', 1200, 800)],
+        ])->assertRedirect();
+
+        $media = $property->media()->where('download_status', 'uploaded')->firstOrFail();
+        Storage::disk('local')->assertExists(Str::after($media->local_path, 'storage:'));
+        $this->actingAs($manager)->get(route('media.show', $media))->assertOk();
+
+        $viewer = User::factory()->create(['password' => 'password', 'role' => 'viewer', 'is_active' => true]);
+        $viewer->properties()->attach($property->id);
+        $this->actingAs($viewer)->post(route('properties.images.store', $property), [
+            'images' => [UploadedFile::fake()->image('blocked.jpg')],
+        ])->assertForbidden();
     }
 }

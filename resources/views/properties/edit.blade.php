@@ -10,5 +10,5 @@
         @foreach(['area'=>'Diện tích','price_sell'=>'Giá bán','price_rent'=>'Giá thuê','sales_commission'=>'Hoa hồng'] as $field=>$label)<label>{{ $label }}<input type="number" step="0.01" min="0" name="{{ $field }}" value="{{ old($field,$property->$field) }}"></label>@endforeach
         <label>Hạn thuê<input type="date" name="rent_expiry" value="{{ old('rent_expiry',$property->rent_expiry?->format('Y-m-d')) }}"></label><label>Ngày cập nhật<input type="date" name="updated_date" value="{{ old('updated_date',$property->updated_date?->format('Y-m-d')) }}"></label>
     </div><div class="form-actions"><a class="btn ghost" href="{{ route('properties.show',$property) }}">Hủy</a><button class="btn primary" type="submit">Lưu thay đổi</button></div>
-</form></div>
+</form><section class="panel image-upload-panel"><h2>Thêm hình ảnh</h2>@include('properties._image-upload', ['property' => $property])</section></div>
 @endsection

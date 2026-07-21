@@ -32,6 +32,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/properties/{property}/customers', [PropertyCustomerController::class, 'store'])->name('properties.customers.store');
     Route::delete('/properties/{property}/customers/{customer}', [PropertyCustomerController::class, 'destroy'])->name('properties.customers.destroy');
     Route::get('/properties/{property}/images', [MediaController::class, 'propertyImages'])->name('properties.images');
+    Route::post('/properties/{property}/images', [MediaController::class, 'store'])->name('properties.images.store');
     Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
     Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
 
