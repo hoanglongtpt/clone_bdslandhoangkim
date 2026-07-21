@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ActivityLog;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Property;
@@ -19,7 +20,7 @@ class CrmAccessTest extends TestCase
     public function test_guest_is_redirected_to_login(): void
     {
         $this->get('/')->assertRedirect('/login');
-        $this->get('/login')->assertOk()->assertSee('Hoàng Kim Land CRM');
+        $this->get('/login')->assertOk()->assertSee('MrKimLand');
     }
 
     public function test_admin_can_see_dashboard_and_user_management(): void
@@ -121,5 +122,25 @@ class CrmAccessTest extends TestCase
         $this->actingAs($viewer)->post(route('properties.images.store', $property), [
             'images' => [UploadedFile::fake()->image('blocked.jpg')],
         ])->assertForbidden();
+    }
+
+    public function test_admin_can_filter_activities_by_employee_name_or_email(): void
+    {
+        $admin = User::factory()->create(['password' => 'password', 'role' => 'admin', 'is_active' => true]);
+        $target = User::factory()->create(['password' => 'password', 'name' => 'Nhân viên Bộ lọc', 'email' => 'filter.employee@example.test', 'is_active' => true]);
+        $other = User::factory()->create(['password' => 'password', 'name' => 'Nhân viên Khác', 'email' => 'other.employee@example.test', 'is_active' => true]);
+        ActivityLog::create(['user_id' => $target->id, 'action' => 'filter-target-action', 'description' => 'Hoạt động cần tìm']);
+        ActivityLog::create(['user_id' => $other->id, 'action' => 'filter-other-action', 'description' => 'Hoạt động không liên quan']);
+
+        $this->actingAs($admin)->get(route('activities.index', ['employee' => 'filter.employee']))
+            ->assertOk()
+            ->assertSee('filter-target-action')
+            ->assertDontSee('filter-other-action')
+            ->assertSee('value="filter.employee"', false);
+
+        $this->actingAs($admin)->get(route('activities.index', ['employee' => 'Nhân viên Bộ lọc']))
+            ->assertOk()
+            ->assertSee('filter-target-action')
+            ->assertDontSee('filter-other-action');
     }
 }

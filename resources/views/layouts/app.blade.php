@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') · Hoàng Kim Land CRM</title>
+    <title>@yield('title', 'Dashboard') · MrKimLand</title>
     <link rel="stylesheet" href="{{ asset('css/crm.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
     <link rel="stylesheet" href="{{ asset('css/light-theme.css') }}">
@@ -13,7 +13,7 @@
 <header class="topbar">
     <a class="brand" href="{{ route('dashboard') }}">
         <span class="brand-mark">▥</span>
-        <span>Hoàng Kim Land CRM</span>
+        <span>MrKimLand</span>
     </a>
     <button class="mobile-nav-toggle" type="button" data-mobile-nav-toggle aria-expanded="false" aria-controls="main-navigation" aria-label="Mở menu">☰</button>
     <nav class="nav-links" id="main-navigation" data-mobile-nav>
