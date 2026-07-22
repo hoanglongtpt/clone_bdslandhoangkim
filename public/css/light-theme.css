@@ -19,6 +19,22 @@ body { background: var(--bg); color: var(--text); }
 }
 .brand { color: #ffdf4f; text-shadow: 0 1px 10px #ffbd1838; }
 .brand-mark { color: #ffc329; filter: drop-shadow(0 0 8px #ffbd1870); }
+.brand-logo {
+    display: block;
+    width: auto;
+    height: 43px;
+    max-width: min(300px, 38vw);
+    object-fit: contain;
+    object-position: left center;
+}
+.login-brand-logo {
+    display: block;
+    width: min(330px, 100%);
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+}
+.login-logo { margin-bottom: 16px; }
 .nav-links > a,
 .account-menu > summary { color: #f4f7ff; font-weight: 600; text-shadow: 0 1px 4px #0008; }
 .nav-links > a:hover,
@@ -341,6 +357,7 @@ body { background: var(--bg); color: var(--text); }
     .brand { min-width: 0; gap: 8px; font-size: 17px; }
     .brand span:last-child { display: inline; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .brand-mark { font-size: 25px; }
+    .brand-logo { height: 36px; max-width: min(245px, calc(100vw - 78px)); }
     .mobile-nav-toggle {
         display: grid;
         place-items: center;
@@ -457,6 +474,7 @@ body { background: var(--bg); color: var(--text); }
 @media (max-width: 430px) {
     .brand { font-size: 15px; }
     .dashboard-toolbar .muted { display: block; margin-top: 2px; }
+    .brand-logo { height: 32px; max-width: calc(100vw - 76px); }
     .property-card { grid-template-columns: 108px minmax(0, 1fr); }
     .property-card .type,
     .property-card .status,

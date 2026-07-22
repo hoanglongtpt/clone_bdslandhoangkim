@@ -20,7 +20,10 @@ class CrmAccessTest extends TestCase
     public function test_guest_is_redirected_to_login(): void
     {
         $this->get('/')->assertRedirect('/login');
-        $this->get('/login')->assertOk()->assertSee('MrKimLand');
+        $this->get('/login')->assertOk()
+            ->assertSee('MrKimLand')
+            ->assertSee(asset('images/favico.png'), false)
+            ->assertSee(asset('images/logo_and_nameweb.png'), false);
     }
 
     public function test_admin_can_see_dashboard_and_user_management(): void

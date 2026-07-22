@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') · MrKimLand</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/favico.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/favico.png') }}">
     <link rel="stylesheet" href="{{ asset('css/crm.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
     <link rel="stylesheet" href="{{ asset('css/light-theme.css') }}">
 </head>
 <body>
 <header class="topbar">
-    <a class="brand" href="{{ route('dashboard') }}">
-        <span class="brand-mark">▥</span>
-        <span>MrKimLand</span>
+    <a class="brand" href="{{ route('dashboard') }}" aria-label="MrKimLand - Dashboard">
+        <img class="brand-logo" src="{{ asset('images/logo_and_nameweb.png') }}" alt="MrKimLand">
     </a>
     <button class="mobile-nav-toggle" type="button" data-mobile-nav-toggle aria-expanded="false" aria-controls="main-navigation" aria-label="Mở menu">☰</button>
     <nav class="nav-links" id="main-navigation" data-mobile-nav>
