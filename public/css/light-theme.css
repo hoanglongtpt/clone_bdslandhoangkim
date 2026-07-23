@@ -34,6 +34,12 @@ body { background: var(--bg); color: var(--text); }
     margin: 0 auto;
     object-fit: contain;
 }
+.login-favicon {
+    width: 112px;
+    height: 112px;
+    border-radius: 22px;
+    object-fit: contain;
+}
 .login-logo { margin-bottom: 16px; }
 .nav-links > a,
 .account-menu > summary { color: #f4f7ff; font-weight: 600; text-shadow: 0 1px 4px #0008; }

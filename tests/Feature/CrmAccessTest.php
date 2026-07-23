@@ -22,8 +22,7 @@ class CrmAccessTest extends TestCase
         $this->get('/')->assertRedirect('/login');
         $this->get('/login')->assertOk()
             ->assertSee('MrKimLand')
-            ->assertSee(asset('images/favico.png'), false)
-            ->assertSee(asset('images/logo_and_nameweb.png'), false);
+            ->assertSee(asset('images/favico.png'), false);
     }
 
     public function test_admin_can_see_dashboard_and_user_management(): void
